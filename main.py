@@ -5,7 +5,7 @@ from bottle import jinja2_template as template, static_file, request, app
 from bottle import redirect
 from pymongo import Connection
 
-connection = Connection('localhost', 27017)
+connection = Connection('192.168.2.33', 27017)
 db = connection.domotica
 
 @bottle.route('/')
@@ -36,7 +36,7 @@ def kaku_off(id):
 def kaku_off(id, dim):
     subprocess.Popen(["sudo", "./kaku/kaku", "8631674", id, dim])
     
-@bottle.route('/api', method='PUT')
+@bottle.route('/api/rooms/', method='PUT')
 def put_document():
     data = request.body.readline()
     if not data:
@@ -49,7 +49,7 @@ def put_document():
     except ValidationError as ve:
         abort(400, str(ve))
      
-@bottle.route('/api/:id', method='GET')
+@bottle.route('/api/rooms/<id>', method='GET')
 def get_document(id):
     entity = db['rooms'].find_one({'_id':id})
     if not entity:
