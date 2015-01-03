@@ -1,0 +1,12 @@
+Build
+—————
+g++ -o kaku kaku.cpp -I/usr/local/include -L/usr/local/lib -lwiringPi
+
+Use
+———
+sudo ./kaku 8631674 1 15
+
+Requirements
+————————————
+Raspberry Pi with wiringPi library
+RF Transmitter connected to pin 8 (wiringPi 15)

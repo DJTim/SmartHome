@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script type="text/javascript">
+var xmlhttp;
+
+  // Are we using a modern browser or ...
+  if (window.XMLHttpRequest) {
+  // code for IE7+, Firefox, Chrome, Opera, Safari
+  xmlhttp=new XMLHttpRequest();
+  } else {
+  // code for IE6, IE5
+  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+  }
+
+
+  function turnOn(id)
+  {
+        xmlhttp.open("GET", id + "/on", true);
+        xmlhttp.send();
+  }
+
+  function turnOff(id)
+  {
+        xmlhttp.open("GET", id + "/off", true);
+        xmlhttp.send();
+  }
+  function toggle(id)
+  {
+  	var elem = document.getElementById("btn" + id);
+  	if (elem.innerHTML == "OFF"){
+  		xmlhttp.open("GET", id + "/off", true);
+        xmlhttp.send();
+        elem.innerHTML = "ON";
+        document.getElementById("btnBack" + id).style.backgroundColor = "#797979";
+    }else{
+    	xmlhttp.open("GET", id + "/on", true);
+        xmlhttp.send();
+        elem.innerHTML = "OFF";
+        document.getElementById("btnBack" + id).style.backgroundColor = "#454545";
+    }
+  }
+  </script>
+<style>
+* {
+   margin: 0px;
+   padding: 0px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    cursor: none; 
+}
+body {
+    overflow:hidden;
+}
+.page{
+	font-family: "Helvetica Neue";
+	font-weight: lighter;
+	color: #bebebe;
+}
+.row{
+	width: 320px;
+}
+.cellHeadLeft{
+	width: 160px;
+	height: 70px;
+	background-color: #000;
+	float: left;
+	font-size: 60px;
+}
+.cellHeadRight{
+	width: 160px;
+	height: 70px;
+	background-color: #454545;
+	float: right;
+	font-size: 21px;
+}
+.alignMiddle{
+	margin-top: 10px;
+	margin-left: 5px;
+	margin-bottom: 10px;
+}
+.cellLeft{
+	width: 160px;
+	height: 170px;
+	background-color: #797979;
+	float: left;
+	text-align: center;
+	font-size: 30px;
+}
+.cellRight{
+	width: 160px;
+	height: 170px;
+	background-color: #797979;
+	float: right;
+	text-align: center;
+	font-size: 30px;
+}
+.alignCenter{
+	margin-top: 70px;
+}
+</style>
+</head>
+<body>
+<div class="page">
+	<div class="row">
+		<div class="cellHeadLeft">
+		15:00
+		</div>
+		<div class="cellHeadRight">
+			<div class="alignMiddle">
+				Friday <br>
+				December 26
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div id="btnBack0" class="cellLeft" onclick='toggle(0);'>
+			<div id="btn0" class="alignCenter">
+				ON
+			</div>
+		</div>
+		<div id="btnBack1" class="cellRight" onclick='toggle(1);'>
+			<div id="btn1" class="alignCenter">
+				ON
+			</div>
+		</div>
+	</div>
+</div>
+
+</body>
+</html>
