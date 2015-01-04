@@ -10,9 +10,9 @@ db = connection.domotica
 
 def kaku(rc, id, state):
 	if state == "on":
-		state = 15
+		state = "15"
 	if state == "off":
-		state = 0
+		state = "0"
 	subprocess.Popen(["sudo", "./kaku/kaku", rc, id, state])
 
 @bottle.route('/')
@@ -64,7 +64,7 @@ def get_document(id):
     return entity
     
 @bottle.route('/api/<roomid>/<lightid>', method='PUT')
-def update_document(id):
+def update_document(roomid, lightid):
     room = db['rooms'].find_one({'_id':roomid})
     if not room:
         abort(404, 'No document with id %s' % id)
