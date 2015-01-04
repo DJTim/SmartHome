@@ -8,6 +8,13 @@ from pymongo import Connection
 connection = Connection('192.168.2.33', 27017)
 db = connection.domotica
 
+def kaku(rc, id, state):
+	if state == "on":
+		state = 15
+	if state == "off":
+		state = 0
+	subprocess.Popen(["sudo", "./kaku/kaku", rc, id, state])
+
 @bottle.route('/')
 def index():
     return template('index.html')
@@ -26,15 +33,15 @@ def stylesheets(filename):
 
 @bottle.route('/<id>/on')
 def kaku_on(id):
-    subprocess.call(["sudo", "./kaku/kaku", "8631674", id, "15"])
+    kaku("8631674", id, "15")
 
 @bottle.route('/<id>/off')
 def kaku_off(id):
-    subprocess.call(["sudo", "./kaku/kaku", "8631674", id, "0"])
+    kaku("8631674", id, "0")
 
 @bottle.route('/<id>/<dim>')
 def kaku_off(id, dim):
-    subprocess.Popen(["sudo", "./kaku/kaku", "8631674", id, dim])
+    kaku("8631674", id, dim)
     
 @bottle.route('/api/rooms/', method='PUT')
 def put_document():
@@ -54,6 +61,20 @@ def get_document(id):
     entity = db['rooms'].find_one({'_id':id})
     if not entity:
         abort(404, 'No document with id %s' % id)
+    return entity
+    
+@bottle.route('/api/<roomid>/<lightid>', method='PUT')
+def update_document(id):
+    room = db['rooms'].find_one({'_id':roomid})
+    if not room:
+        abort(404, 'No document with id %s' % id)
+    data = request.body.readline()
+    if not data:
+        abort(400, 'No data received')
+    entity = json.loads(data)    
+    if entity.has_key('state'):
+    	kaku("8631674", lightid, entity['state']) #TODO: lightid not correct =/= remotelightid. rc change
+    	#TODO: Update DB
     return entity
 
 bottle.run(host='192.168.2.215', port=8080, debug=False)
