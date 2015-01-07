@@ -71,9 +71,10 @@ def update_document(roomid, lightid):
     data = request.body.readline()
     if not data:
         abort(400, 'No data received')
-    entity = json.loads(data)    
+    entity = json.loads(data)
+    light = next((item for item in room["lights"] if item["name"] == lightid), None)
     if entity.has_key('state'):
-    	kaku("8631674", lightid, entity['state']) #TODO: lightid not correct =/= remotelightid. rc change
+    	kaku(light["rc"], light["rcid"], entity['state'])
     	db['rooms'].update(
    			{ '_id': roomid, 'lights.name': lightid },
    			{ '$set': { 'lights.$.state' : entity['state'] } }

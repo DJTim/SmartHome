@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <script type="text/javascript">
+	<script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
+  	<script type="text/javascript">
 var xmlhttp;
 
   // Are we using a modern browser or ...
@@ -40,7 +41,35 @@ var xmlhttp;
         document.getElementById("btnBack" + id).style.backgroundColor = "#454545";
     }
   }
-  </script>
+  	
+	function updateGUI(){
+		$.get( "http://192.168.2.215:8080/api/rooms/Tim", function( data ) {
+			$.each(data['lights'], function( index, value ) {
+				if(value['type']=='switch'){
+					if (value['state']=='off'){
+						$("#btnBack_"+value['name']).css( "background-color", "#797979" );
+						$("#btnBack_"+value['name']).attr("onclick","domo_switch('"+value['name']+"','on')");
+						$("#btn_"+value['name']).html("ON");
+					}else{
+						$("#btnBack_"+value['name']).css( "background-color", "#454545" );
+						$("#btnBack_"+value['name']).attr("onclick","domo_switch('"+value['name']+"','off')");
+						$("#btn_"+value['name']).html("OFF");
+					}
+				}
+			});
+		});
+	}
+	
+	function domo_switch(id, state){
+		$.ajax({
+		  type: "PUT",
+		  url: "http://192.168.2.215:8080/api/Tim/"+id,
+		  data: '{"state": "'+state+'"}',
+		  dataType: "json"
+		});
+	}
+	setInterval(updateGUI, 1000);
+	</script>
 <style>
 * {
    margin: 0px;
@@ -86,7 +115,7 @@ body {
 .cellLeft{
 	width: 160px;
 	height: 170px;
-	background-color: #797979;
+	/*background-color: #797979;*/
 	float: left;
 	text-align: center;
 	font-size: 30px;
@@ -94,7 +123,7 @@ body {
 .cellRight{
 	width: 160px;
 	height: 170px;
-	background-color: #797979;
+	/*background-color: #797979;*/
 	float: right;
 	text-align: center;
 	font-size: 30px;
@@ -118,13 +147,13 @@ body {
 		</div>
 	</div>
 	<div class="row">
-		<div id="btnBack0" class="cellLeft" onclick='toggle(0);'>
-			<div id="btn0" class="alignCenter">
+		<div id="btnBack_lightLeft" class="cellLeft" onclick='toggle(0);'>
+			<div id="btn_lightLeft" class="alignCenter">
 				ON
 			</div>
 		</div>
-		<div id="btnBack1" class="cellRight" onclick='toggle(1);'>
-			<div id="btn1" class="alignCenter">
+		<div id="btnBack_lightRight" class="cellRight" onclick='toggle(1);'>
+			<div id="btn_lightRight" class="alignCenter">
 				ON
 			</div>
 		</div>
