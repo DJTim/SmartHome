@@ -5,7 +5,7 @@ from bottle import jinja2_template as template, static_file, request, app
 from bottle import redirect
 from pymongo import Connection
 
-connection = Connection('192.168.2.33', 27017)
+connection = Connection('localhost', 27017)
 db = connection.domotica
 
 def kaku(rc, id, state):
@@ -74,7 +74,10 @@ def update_document(roomid, lightid):
     entity = json.loads(data)    
     if entity.has_key('state'):
     	kaku("8631674", lightid, entity['state']) #TODO: lightid not correct =/= remotelightid. rc change
-    	#TODO: Update DB
+    	db['rooms'].update(
+   			{ '_id': roomid, 'lights.name': lightid },
+   			{ '$set': { 'lights.$.state' : entity['state'] } }
+		)
     return entity
 
 bottle.run(host='192.168.2.215', port=8080, debug=False)
