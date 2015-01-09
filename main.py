@@ -76,7 +76,7 @@ def get_document(id):
 #Change the state of a light inside a room
 @bottle.route('/api/<roomid>/<lightid>', method='PUT')
 def update_document(roomid, lightid):
-	global roomspubsocket
+    global roomspubsocket
 	
     room = db['rooms'].find_one({'_id':roomid})
     if not room:
@@ -97,7 +97,7 @@ def update_document(roomid, lightid):
    			{ '$set': { 'lights.$.state' : entity['state'] } }
 		)
     
-    pubsock.send_json(db['rooms'].find_one({'_id':roomid}))
+    roomspubsocket.send_json(db['rooms'].find_one({'_id':roomid}))
     return {'status': 'ok'}
 
 #Listen for room updates
@@ -110,14 +110,14 @@ def listen():
     #fix disconnecting clients
     rfile = bottle.request.environ['wsgi.input'].rfile
 
-	poll = zmq.Poller()
-	poll.register(roomssubsocket, zmq.POLLIN)
-	poll.register(rfile, zmq.POLLIN)
-	
-	events = dict(poll.poll())
-
-	if rfile.fileno() in events:
-		return
+    poll = zmq.Poller()
+    poll.register(roomssubsocket, zmq.POLLIN)
+    poll.register(rfile, zmq.POLLIN)
+    
+    events = dict(poll.poll())
+    
+    if rfile.fileno() in events:
+        return
     
     room = roomssubsocket.recv_json()
     return room
