@@ -1,3 +1,5 @@
 bottle
 Jinja2
 pymongo
+gevent
+pyzmq
