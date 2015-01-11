@@ -7,6 +7,8 @@
 	<script src="jquery.ui.touch-punch.min.js"></script>
   	<script type="text/javascript">
   	
+  	var room = "";
+  	
   	function updateGUI(data, initGUI){
   		$.each(data['lights'], function( index, value ) {
   			if (initGUI){
@@ -48,7 +50,7 @@
 	function domo_switch(id, state){
 		$.ajax({
 		  type: "PUT",
-		  url: "http://192.168.2.215:8080/api/Tim/"+id,
+		  url: "http://192.168.2.215:8080/api/" + room + "/"+id,
 		  data: '{"state": "'+state+'"}',
 		  dataType: "json"
 		});
@@ -74,9 +76,29 @@
         });
 	}
 	
+	function getParam(val) {
+		var result = "Not found",
+			tmp = [];
+		location.search
+		.substr(1)
+			.split("&")
+			.forEach(function (item) {
+			tmp = item.split("=");
+			if (tmp[0] === val) result = decodeURIComponent(tmp[1]);
+		});
+		return result;
+	}
+	
 	$(function() {
+		room = getParam("room");
+		
+		if (room == "Not found"){
+			alert("No room specified in url");
+			return;
+		}
+		
 		//initial update of GUI
-		$.get( "http://192.168.2.215:8080/api/rooms/Tim", function(data) {
+		$.get( "http://192.168.2.215:8080/api/rooms/" + room, function(data) {
 			updateGUI(data, true);
         });
 		
