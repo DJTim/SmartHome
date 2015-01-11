@@ -10,41 +10,43 @@
   	var room = "";
   	
   	function updateGUI(data, initGUI){
-  		$.each(data['lights'], function( index, value ) {
-  			if (initGUI){
-  				$("#btn_"+index).attr("id",value['name']);
-  			}
-  			
-  			idName = "#"+value['name'];
-  			
-  			switch(value['type']){
-  				case 'switch':
-  					if (value['state']=='off'){
-						$(idName).css( "background-color", "#797979" );
-						$(idName).attr("onclick","domo_switch('"+value['name']+"','on')");
-					}else{
-						$(idName).css( "background-color", "#454545" );
-						$(idName).attr("onclick","domo_switch('"+value['name']+"','off')");
-					}
-  				break;
-  				case 'dim':
-  					if (initGUI){
-						$(idName).slider({
-							orientation: "vertical",
-							range: "min",
-							min: 0,
-							max: 15,
-							value: value['state'],
-							slide: function( event, ui ) {
-								domo_switch(value['name'],ui.value);
-							}
-						});
-					}else{
-						$(idName).slider("value", value['state']);
-					}
-  				break;
-  			}
-		});
+  		if (data['_id'] == room){
+			$.each(data['lights'], function( index, value ) {
+				if (initGUI){
+					$("#btn_"+index).attr("id",value['name']);
+				}
+			
+				idName = "#"+value['name'];
+			
+				switch(value['type']){
+					case 'switch':
+						if (value['state']=='off'){
+							$(idName).css( "background-color", "#797979" );
+							$(idName).attr("onclick","domo_switch('"+value['name']+"','on')");
+						}else{
+							$(idName).css( "background-color", "#454545" );
+							$(idName).attr("onclick","domo_switch('"+value['name']+"','off')");
+						}
+					break;
+					case 'dim':
+						if (initGUI){
+							$(idName).slider({
+								orientation: "vertical",
+								range: "min",
+								min: 0,
+								max: 15,
+								value: value['state'],
+								slide: function( event, ui ) {
+									domo_switch(value['name'],ui.value);
+								}
+							});
+						}else{
+							$(idName).slider("value", value['state']);
+						}
+					break;
+				}
+			});
+		}
 	}
 	
 	function domo_switch(id, state){
