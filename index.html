@@ -36,7 +36,7 @@
 								min: 0,
 								max: 15,
 								value: value['state'],
-								slide: function( event, ui ) {
+								stop: function( event, ui ) {
 									domo_switch(value['name'],ui.value);
 								}
 							});
@@ -118,7 +118,7 @@
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    /*cursor: none;*/ 
+    cursor: none;
 }
 body {
     overflow:hidden;
