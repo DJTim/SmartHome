@@ -14,9 +14,8 @@ int main(int argc, char **argv)
 	int pin_out = 15; // Pin out using wiringPi pin numbering scheme (15 = TxD / BCM GPIO 14, see https://projects.drogon.net/raspberry-pi/wiringpi/pins/)
     	int device = 0;
     	int address = 0;
-    	bool state = false;
+    	int state = 0;
 	char type = 's';
-	int dim = 0;
     
     
     if( argc != 5 ) { // not enough arguments
@@ -26,8 +25,8 @@ int main(int argc, char **argv)
     } else {
 	    address = atol(argv[1]);
 	    device = atol(argv[2]);
-	    type = atol(argv[3]);
-	    dim = atol(argv[4]);
+	    type = argv[3][0];
+	    state = atol(argv[4]);
 	    
 	    //string statestr = argv[3];
 	    
@@ -51,10 +50,14 @@ int main(int argc, char **argv)
 	
 	NewRemoteTransmitter transmitter(address, pin_out, 260, 3);
 	
-	if(type == 'd'){
-		transmitter.sendDim(device, dim);
+	if(state == 0){
+		transmitter.sendUnit(device, state);
 	}else{
-		transmitter.sendUnit(device, dim);
+		if(type == 'd'){
+			transmitter.sendDim(device, state);
+		}else{
+			transmitter.sendUnit(device, state);
+		}
 	}
 }
 
