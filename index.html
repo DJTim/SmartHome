@@ -14,6 +14,7 @@
 			$.each(data['lights'], function( index, value ) {
 				if (initGUI){
 					$("#btn_"+index).attr("id",value['name']);
+					$("#btn_"+index+"_spacer").attr("id",value['name']+"Spacer");
 				}
 			
 				idName = "#"+value['name'];
@@ -22,9 +23,11 @@
 					case 'switch':
 						if (value['state']=='off'){
 							$(idName).css( "background-color", "#797979" );
+							$(idName+"Spacer").css( "background-color", "#797979");
 							$(idName).attr("onclick","domo_switch('"+value['name']+"','on')");
 						}else{
 							$(idName).css( "background-color", "#454545" );
+							$(idName+"Spacer").css( "background-color", "#454545");
 							$(idName).attr("onclick","domo_switch('"+value['name']+"','off')");
 						}
 					break;
@@ -42,6 +45,11 @@
 							});
 						}else{
 							$(idName).slider("value", value['state']);
+							if ($(idName).slider("value") > 0){
+								$(idName+"Spacer").css( "background-color", "#454545");
+							}else{
+								$(idName+"Spacer").css( "background-color", "#797979");
+							}
 						}
 					break;
 				}
@@ -215,7 +223,16 @@ body {
 	text-align: center;
 	font-size: 30px;
 }
-
+.button{
+	width: 160px;
+	height: 150px;
+	background-color: #797979;
+}
+.spacer{
+	width: 160px;
+	height: 30px;
+	background-color: #797979;
+}
 .sceneItem{
 	width: 160px;
 	height: 43px;
@@ -237,8 +254,14 @@ body {
 		50 W
 	</div>
 	<div id="lights" class="row" style="display:none;">
-		<div id="btn_0" class="cellLeft"></div>
-		<div id="btn_1" class="cellRight"></div>
+		<div class="cellLeft">
+			<div id="btn_0" class="button"></div>
+			<div id="btn_0_spacer" class="spacer"></div>
+		</div>
+		<div class="cellRight">
+			<div id="btn_1" class="button"></div>
+			<div id="btn_1_spacer" class="spacer"></div>
+		</div>
 	</div>
 	<div id="scenarios" class="row" style="display:none;">
 		<div class="cellLeft">
