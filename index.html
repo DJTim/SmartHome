@@ -92,6 +92,42 @@
 	}
 	
 	$(function() {
+		//init GUI
+		$("#menu_0").click(function() {
+			if ($('#lights').css('display') == 'none') {
+				$('#header').show();
+				$('#home').hide();
+				$('#lights').show();
+				$('#scenarios').hide();
+				$("#menu_0").css( "background-color", "#797979" );
+				$("#menu_1").css( "background-color", "#000" );
+			}else{
+				$('#header').hide();
+				$('#home').show();
+				$('#lights').hide();
+				$('#scenarios').hide();
+				$("#menu_0").css( "background-color", "#000" );
+				$("#menu_1").css( "background-color", "#000" );
+			}
+		});
+		$("#menu_1").click(function() {
+			if ($('#scenarios').css('display') == 'none') {
+				$('#header').show();
+				$('#home').hide();
+				$('#lights').hide();
+				$('#scenarios').show();
+				$("#menu_0").css( "background-color", "#000" );
+				$("#menu_1").css( "background-color", "#797979" );
+			}else{
+				$('#header').hide();
+				$('#home').show();
+				$('#lights').hide();
+				$('#scenarios').hide();
+				$("#menu_0").css( "background-color", "#000" );
+				$("#menu_1").css( "background-color", "#000" );
+			}
+		});
+		
 		room = getParam("room");
 		
 		if (room == "Not found"){
@@ -106,7 +142,7 @@
 		
 		//start long polling to server
 		updateGUIPoll();
-	})
+	});
 	</script>
 <style>
 * {
@@ -118,7 +154,7 @@
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    cursor: none;
+    /*cursor: none;*/
 }
 body {
     overflow:hidden;
@@ -130,65 +166,96 @@ body {
 }
 .row{
 	width: 320px;
+	height: 180px;
 }
-.cellHeadLeft{
-	width: 160px;
-	height: 70px;
+.header{
 	background-color: #000;
-	float: left;
-	font-size: 60px;
+	height:29px;
+	width: 320px;
+	font-size: 21px;
+	text-align: center;
+	padding-top: 1px;
 }
-.cellHeadRight{
-	width: 160px;
-	height: 70px;
-	background-color: #454545;
-	float: right;
+.rowNoHeader{
+	width: 320px;
+	height:170px;
+	text-align: center;
+	font-size: 30px;
+	padding-top: 40px;
+	background-color: #333;
+}
+.row{
+	width: 320px;
+	height: 180px;
+}
+.footer{
+	background-color: #000;
+	height:30px;
+	width: 320px;
 	font-size: 21px;
 }
-.alignMiddle{
-	margin-top: 10px;
-	margin-left: 5px;
-	margin-bottom: 10px;
+.menuItem{
+	float: left;
+	width: 160px;
+	text-align: center;
 }
 .cellLeft{
 	width: 160px;
-	height: 170px;
-	/*background-color: #797979;*/
+	height: 180px;
+	background-color: #797979;
 	float: left;
 	text-align: center;
 	font-size: 30px;
 }
 .cellRight{
 	width: 160px;
-	height: 170px;
-	/*background-color: #797979;*/
+	height: 180px;
+	background-color: #797979;
 	float: right;
 	text-align: center;
 	font-size: 30px;
 }
-.alignCenter{
-	margin-top: 70px;
+
+.sceneItem{
+	width: 160px;
+	height: 43px;
+	float: left;
+	text-align: center;
+	font-size: 25px;
+	margin-top: 17px;
 }
 </style>
 </head>
 <body>
 <div class="page">
-	<div class="row">
-		<div class="cellHeadLeft">
-		15:00
-		</div>
-		<div class="cellHeadRight">
-			<div class="alignMiddle">
-				Friday <br>
-				December 26
-			</div>
-		</div>
+	<div id="header" class="header" style="display:none;">
+		Sunday 1 February 15:00
 	</div>
-	<div class="row">
+	<div id="home" class="rowNoHeader">
+		Sunday 1 February </br>
+		15:00 </br>
+		50 W
+	</div>
+	<div id="lights" class="row" style="display:none;">
 		<div id="btn_0" class="cellLeft"></div>
 		<div id="btn_1" class="cellRight"></div>
 	</div>
+	<div id="scenarios" class="row" style="display:none;">
+		<div class="cellLeft">
+			<div class="sceneItem">Wake Up</div>
+			<div class="sceneItem">Watch TV</div>
+			<div class="sceneItem">All On</div>
+		</div>
+		<div class="cellRight">
+			<div class="sceneItem">Sleep</div>
+			<div class="sceneItem">Watch Movie</div>
+			<div class="sceneItem">All Off</div>
+		</div>
+	</div>
+	<div class="footer">
+		<div id="menu_0" class="menuItem">Lights</div>
+		<div id="menu_1" class="menuItem">Scenarios</div>
+	</div>
 </div>
-
 </body>
 </html>
