@@ -16,12 +16,12 @@ ctx = zmq.Context()
 roomspubsocket = ctx.socket(zmq.PUB)
 roomspubsocket.bind('inproc://roomspub')
 
-def kaku(rc, id, state):
+def kaku(rc, id, type, state):
 	if state == "on":
-		state = "15"
+		state = "1"
 	if state == "off":
 		state = "0"
-	subprocess.Popen(["sudo", "./kaku/kaku", rc, id, state])
+	subprocess.Popen(["sudo", "./kaku/kaku", rc, id, type[:1], state])
 
 @bottle.route('/')
 def index():
@@ -41,15 +41,15 @@ def stylesheets(filename):
 
 @bottle.route('/<id>/on')
 def kaku_on(id):
-    kaku("8631674", id, "15")
+    kaku("8631674", id, "s", "on")
 
 @bottle.route('/<id>/off')
 def kaku_off(id):
-    kaku("8631674", id, "0")
+    kaku("8631674", id, "s", "off")
 
 @bottle.route('/<id>/<dim>')
 def kaku_off(id, dim):
-    kaku("8631674", id, dim)
+    kaku("8631674", id, "d", dim)
     
 #Save new and updated room
 @bottle.route('/api/rooms/', method='PUT')
@@ -91,7 +91,7 @@ def update_document(roomid, lightid):
     light = next((item for item in room["lights"] if item["name"] == lightid), None)
     
     if entity.has_key('state'):
-    	kaku(light["rc"], light["rcid"], entity['state'])
+    	kaku(light["rc"], light["rcid"], light["type"], entity['state'])
     	db['rooms'].update(
    			{ '_id': roomid, 'lights.name': lightid },
    			{ '$set': { 'lights.$.state' : entity['state'] } }

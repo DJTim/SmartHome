@@ -15,17 +15,19 @@ int main(int argc, char **argv)
     	int device = 0;
     	int address = 0;
     	bool state = false;
+	char type = 's';
 	int dim = 0;
     
     
-    if( argc != 4 ) { // not enough arguments
-    	std::cout << "usage: " << argv[0] << " address device dimlevel" << std::endl;
-    	std::cout << "example: " << argv[0] << " 1234567 1 15" << std::endl;
+    if( argc != 5 ) { // not enough arguments
+    	std::cout << "usage: " << argv[0] << " address device type dimlevel" << std::endl;
+    	std::cout << "example: " << argv[0] << " 1234567 1 d 15" << std::endl;
 	    return 0;
     } else {
 	    address = atol(argv[1]);
 	    device = atol(argv[2]);
-	    dim = atol(argv[3]);
+	    type = atol(argv[3]);
+	    dim = atol(argv[4]);
 	    
 	    //string statestr = argv[3];
 	    
@@ -49,10 +51,10 @@ int main(int argc, char **argv)
 	
 	NewRemoteTransmitter transmitter(address, pin_out, 260, 3);
 	
-	if(dim == 0){
-		transmitter.sendUnit(device, false);
-	}else{
+	if(type == 'd'){
 		transmitter.sendDim(device, dim);
+	}else{
+		transmitter.sendUnit(device, dim);
 	}
 }
 
