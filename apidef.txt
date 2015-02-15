@@ -1,0 +1,68 @@
+/api/rooms
+----------
+GET 	Get all rooms
+PUT 	Add or update room
+
+/api/rooms/roomName
+-------------------
+GET 	Get room object
+DELETE	Delete room
+
+/api/rooms/roomName/devices/deviceName
+--------------------------------------
+GET		Get device object
+PUT 	Change state of device, execute command of device, push data
+
+/api/rooms/roomName/scenarios/scenarioName
+------------------------------------------
+PUT 	Execute scenario
+
+/api/rooms/listen
+-----------------
+GET 	Listen to server (PUB - SUB)
+
+/api/scenarios
+--------------
+GET 	Get all scenarios
+
+/api/scenarios/scenarioName
+---------------------------
+PUT 	Execute scenario
+
+-----------------------------------------------------------------------------------------
+
+/api/rooms
+----------
+GET 	Get all rooms
+PUT 	Add or update room
+
+/api/rooms/roomName
+-------------------
+GET 	Get room object
+DELETE	Delere room
+
+/api/devices
+--------------
+GET 	Get devices
+PUT		Add or update device
+
+/api/devices/deviceName
+-----------------------
+GET 	Get device object
+DELETE	Delete device
+PUT		Change state device, execute command, put data
+
+/api/scenarios
+--------------
+GET 	Get scenarios
+PUT 	Add or update scenario
+
+/api/scenarios/scenarioName
+---------------------------
+GET 	Get scenario object
+DELETE	Delere scenario
+PUT		Execute scenario
+
+/api/listen
+-----------
+GET 	Listen to server (PUB - SUB)
