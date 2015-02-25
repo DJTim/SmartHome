@@ -22,12 +22,12 @@ sLeftLightOn = Scenario(name = 'LeftLightOn', room = tim, deviceStates = [sLeftL
 for room in Room.objects:
 	print room.name
 	print 'Devices:'
-	for device in room.devices:
+	for device in Device.objects(room = room.id):
 		print device.name
 		print device._cls
-	print 'Scenarios:'
-	for scenario in room.scenarios:
-		print scenario.name
+print 'Scenarios:'
+for scenario in Scenario.objects:
+	print scenario.name
 
 
 
