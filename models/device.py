@@ -3,7 +3,6 @@ from mongoengine import *
 class Device(Document):
 	name = StringField(required=True)
 	room = ReferenceField('Room')
-	scenarios = ListField(ReferenceField('Scenario'))
 	meta = {'allow_inheritance': True}
 
 class KakuDevice(Device):

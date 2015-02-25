@@ -15,9 +15,17 @@
 	"build_system": "",
 	"command_palette":
 	{
-		"height": 347.0,
+		"height": 392.0,
 		"selected_items":
 		[
+			[
+				"pa",
+				"Package Control: Install Package"
+			],
+			[
+				"pack",
+				"Package Control: Install Package"
+			],
 			[
 				"Package Control: ",
 				"Package Control: Install Package"
@@ -50,15 +58,33 @@
 	[
 		"/Users/tim/Documents/Projects/SmartHome",
 		"/Users/tim/Documents/Projects/SmartHome/kaku",
+		"/Users/tim/Documents/Projects/SmartHome/models",
 		"/Users/tim/Documents/Projects/SmartHome/static"
 	],
 	"file_history":
 	[
-		"/Users/tim/Library/Application Support/Sublime Text 3/Packages/Default/Default (OSX).sublime-keymap",
+		"/Users/tim/Documents/Projects/SmartHome/models/device.py",
+		"/Users/tim/Documents/Projects/SmartHome/models/main.py",
+		"/Users/tim/Documents/Projects/SmartHome/apidef.txt",
 		"/Users/tim/Documents/Projects/SmartHome/index.html",
-		"/Users/tim/Documents/Projects/SmartHome/static/js/jquery.ui.touch-punch.min.js",
 		"/Users/tim/Documents/Projects/SmartHome/LICENSE",
-		"/Users/tim/Documents/Projects/SmartHome/requirements"
+		"/Users/tim/Documents/Projects/SmartHome/main.py",
+		"/Users/tim/Documents/Projects/SmartHome/README.md",
+		"/Users/tim/Documents/Projects/SmartHome/requirements",
+		"/Users/tim/Documents/Projects/SmartHome/SmartHome.sublime-project",
+		"/Users/tim/Documents/Projects/SmartHome/kaku/kaku",
+		"/Users/tim/Documents/Projects/SmartHome/kaku/kaku.cpp",
+		"/Users/tim/Documents/Projects/SmartHome/kaku/kaku.py",
+		"/Users/tim/Documents/Projects/SmartHome/kaku/kaku_test",
+		"/Users/tim/Documents/Projects/SmartHome/kaku/NewRemoteTransmitter.cpp",
+		"/Users/tim/Documents/Projects/SmartHome/kaku/NewRemoteTransmitter.h",
+		"/Users/tim/Documents/Projects/SmartHome/kaku/README",
+		"/Users/tim/Documents/Projects/SmartHome/models/__init__.py",
+		"/Users/tim/Documents/Projects/SmartHome/models/room.py",
+		"/Users/tim/Documents/Projects/SmartHome/models/scenario.py",
+		"/Users/tim/Documents/Projects/SmartHome/static/css/slider.css",
+		"/Users/tim/Documents/Projects/SmartHome/static/js/jquery.ui.touch-punch.min.js",
+		"/Users/tim/Library/Application Support/Sublime Text 3/Packages/Default/Default (OSX).sublime-keymap"
 	],
 	"find":
 	{
@@ -157,11 +183,11 @@
 	},
 	"select_symbol":
 	{
-		"height": 0.0,
+		"height": 392.0,
 		"selected_items":
 		[
 		],
-		"width": 0.0
+		"width": 392.0
 	},
 	"selected_group": 0,
 	"settings":

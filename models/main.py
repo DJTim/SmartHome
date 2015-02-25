@@ -18,12 +18,6 @@ energy = EnergyMonitor(name = 'energy', room = tim, mesurements = [energyMeasure
 sLeftLightState = ScenarioDeviceState(device = leftLight, state = 1)
 sLeftLightOn = Scenario(name = 'LeftLightOn', room = tim, deviceStates = [sLeftLightState]).save()
 
-tim.devices = [leftLight, energy]
-tim.scenarios = [sLeftLightOn]
-tim.save()
-
-leftLight.scenarios = [sLeftLightOn]
-leftLight.save()
 
 for room in Room.objects:
 	print room.name
@@ -37,7 +31,7 @@ for room in Room.objects:
 
 
 
-#ROOM name, devices[], scenarios[]
-#DEVICE name, room, scenario[], (device specific options)
+#ROOM name
+#DEVICE name, room, (device specific options)
 #SCENARIO name, room, deviceState[]
 	#DEVICESTATE device, state
