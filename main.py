@@ -13,7 +13,7 @@ from models.device import *
 
 #bottle and mongoengine init
 app = bottle.Bottle()
-plugin = mongoengine.Plugin(db='test',alias='test_db')
+plugin = mongoengine.Plugin(db='test_db')
 app.install(plugin)
 
 #zmq and socket init. Pub Sub pattern
