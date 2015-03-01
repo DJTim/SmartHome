@@ -170,28 +170,28 @@ def putDeviceData(deviceID, db):
     entity = json.loads(data)
 
     #TODO Move to Model class or separate py to communicate with hardware
-    def updateKaku():
+    def executeKaku():
         device.state = entity['state']
         device.save()
         device.reload()
         kaku(device.rc, device.rcid, device.type, device.state)
 
-    def updateIRDevice():
+    def executeIRDevice():
         #TODO
         print "IRDevice"
 
-    def updateHTTPDevice():
+    def executeHTTPDevice():
         #TODO
         print "HTTPDevice"
 
-    def updateEnergyMonitor():
-        measurement = Mesurement(dateTime = datetime.datetime.now, power = entity['power'])
+    def addEnergyMonitorMesurement():
+        measurement = Measurement(dateTime = datetime.datetime.now, power = entity['power'])
         #TODO Update average
-        device.mesurements.append(measurement)
+        device.measurements.append(measurement)
         device.save()
         device.reload()
 
-    deviceComm = {"KakuDevice": updateKaku, "IRDevice": updateIRDevice, "HTTPDevice": updateHTTPDevice, "EnergyMonitor": updateEnergyMonitor}
+    deviceComm = {"KakuDevice": executeKaku, "IRDevice": executeIRDevice, "HTTPDevice": executeHTTPDevice, "EnergyMonitor": addEnergyMonitorMeasurement}
     #END Block
 
     try:
@@ -215,7 +215,7 @@ def putScenario(db):
     data = request.body.readline()
     if not data:
         return HTTPError(400, 'No data received')
-    try: #maybe has to change, not sure
+    try:
         scenario = Scenario.from_json(data)
         scenario.save()
         return {'status': 'ok'}

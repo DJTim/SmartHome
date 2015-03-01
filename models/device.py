@@ -25,12 +25,12 @@ class HTTPCommand(EmbeddedDocument):
 	type = StringField()
 
 class EnergyMonitor(Device):
-	mesurements = ListField(EmbeddedDocumentField('Mesurement'))
+	measurements = ListField(EmbeddedDocumentField('Measurement'))
 	currentUseDay = IntField()
 	currentUseWeek = IntField()
 	currentUseMonth = IntField()
 	currentUseYear = IntField()
 
-class Mesurement(EmbeddedDocument):
+class Measurement(EmbeddedDocument):
 	dateTime = DateTimeField()
 	power = IntField()
