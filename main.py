@@ -169,8 +169,6 @@ def putDeviceData(deviceID, db):
     entity = json.loads(data)
 
     #TODO Move to Model class or separate py to communicate with hardware
-    deviceComm = {"KakuDevice": updateKaku, "IRDevice": updateIRDevice, "HTTPDevice": updateHTTPDevice, "EnergyMonitor": updateEnergyMonitor}
-
     def updateKaku():
         Device.update_one(state = entity['state'])
         kaku(Device.rc, Device.rcid, Device.type, Device.state)
@@ -189,6 +187,8 @@ def putDeviceData(deviceID, db):
         Device.measurements.append(measurement)
         Device.save()
         Device.reload()
+
+    deviceComm = {"KakuDevice": updateKaku, "IRDevice": updateIRDevice, "HTTPDevice": updateHTTPDevice, "EnergyMonitor": updateEnergyMonitor}
     #END Block
 
     try:
