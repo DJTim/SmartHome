@@ -174,11 +174,14 @@ def putDeviceData(deviceID, db):
     def updateKaku():
         Device.update_one(state = entity['state'])
         kaku(Device.rc, Device.rcid, Device.type, Device.state)
+
     def updateIRDevice():
         #TODO
+        print "IRDevice"
 
     def updateHTTPDevice():
         #TODO
+        print "HTTPDevice"
 
     def updateEnergyMonitor():
         measurement = Mesurement(dateTime = datetime.datetime.now, power = entity['power'])
