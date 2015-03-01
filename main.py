@@ -100,7 +100,7 @@ def deleteRoom(roomID, db):
 #Get devices of room
 @app.route('/api/rooms/<roomID>/devices', method='GET')
 def getRoomDevices(roomID, db):
-    devices = Device.objects.get(room = roomID)
+    devices = Device.objects(room = roomID)
     if not devices:
         return HTTPError(404, 'Room with id %s has no devices' % roomID)
     return devices.to_json()
@@ -108,7 +108,7 @@ def getRoomDevices(roomID, db):
 #Get scenarios of room
 @app.route('/api/rooms/<roomID>/scenarios', method='GET')
 def getRoomScenarios(roomID, db):
-    scenarios = Scenario.objects.get(room = roomID)
+    scenarios = Scenario.objects(room = roomID)
     if not scenarios:
         return HTTPError(404, 'Room with id %s has no scenarios' % roomID)
     return scenarios.to_json()
@@ -252,7 +252,7 @@ def putDeviceData(scenarioID, db):
     
     entity = json.loads(data)
     
-    if entity.has_key('state'):
+    if entity.has_key('execute'):
         #TODO Add scenario logic
         return {'status': 'ok'}
 
