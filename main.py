@@ -128,9 +128,8 @@ def putDevice(db):
     data = request.body.readline()
     if not data:
         return HTTPError(400, 'No data received')
-    entity = json.loads(data)
     try:
-        device = deviceClasses[entity['cls']].from_json(entity['device'])
+        device = deviceClasses[data['cls']].from_json(data['device'])
         device.save()
         return {'status': 'ok'}
     except ValidationError as ve:
