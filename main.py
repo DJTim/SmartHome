@@ -25,10 +25,10 @@ roomspubsocket.bind('inproc://roomspub')
 
 def kaku(rc, id, type, state):
 	if state == "on":
-		state = "1"
+		state = 1
 	if state == "off":
-		state = "0"
-	subprocess.Popen(["sudo", "./kaku/kaku", rc, id, type[:1], state])
+		state = 0
+	subprocess.Popen(["sudo", "./kaku/kaku", str(rc), str(id), type[:1], str(state)])
 
 @app.route('/')
 def index():
