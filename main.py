@@ -4,7 +4,7 @@ from zmq import green as zmq
 import bottle
 import subprocess
 from bottle import jinja2_template as template, static_file, request, app
-from bottle import redirect
+from bottle import redirect, HTTPError
 from bottle.ext import mongoengine
 
 from models.room import *
