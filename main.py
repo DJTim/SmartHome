@@ -5,11 +5,16 @@ import bottle
 import subprocess
 from bottle import jinja2_template as template, static_file, request, app
 from bottle import redirect
-from pymongo import Connection
+from bottle.ext import mongoengine
 
-#mongoDB init
-connection = Connection('localhost', 27017)
-db = connection.domotica
+from models.room import *
+from models.scenario import *
+from models.device import *
+
+#bottle and mongoengine init
+app = bottle.Bottle()
+plugin = mongoengine.Plugin(db='test',alias='test_db')
+app.install(plugin)
 
 #zmq and socket init. Pub Sub pattern
 ctx = zmq.Context()
@@ -23,92 +28,218 @@ def kaku(rc, id, type, state):
 		state = "0"
 	subprocess.Popen(["sudo", "./kaku/kaku", rc, id, type[:1], state])
 
-@bottle.route('/')
+@app.route('/')
 def index():
     return template('index.html')
 
-@bottle.route('/<filename:re:.*\.html>')
+@app.route('/<filename:re:.*\.html>')
 def server_static(filename):
     return static_file(filename, root='static/')
 
-@bottle.get('/<filename:re:.*\.js>')
+@app.get('/<filename:re:.*\.js>')
 def javascripts(filename):
     return static_file(filename, root='static/js')
 
-@bottle.get('/<filename:re:.*\.css>')
+@app.get('/<filename:re:.*\.css>')
 def stylesheets(filename):
     return static_file(filename, root='static/css')
 
-@bottle.route('/<id>/on')
+@app.route('/<id>/on')
 def kaku_on(id):
     kaku("8631674", id, "s", "on")
 
-@bottle.route('/<id>/off')
+@app.route('/<id>/off')
 def kaku_off(id):
     kaku("8631674", id, "s", "off")
 
-@bottle.route('/<id>/<dim>')
+@app.route('/<id>/<dim>')
 def kaku_off(id, dim):
     kaku("8631674", id, "d", dim)
-    
-#Save new and updated room
-@bottle.route('/api/rooms/', method='PUT')
-def put_document():
-    data = request.body.readline()
-    if not data:
-        abort(400, 'No data received')
-    entity = json.loads(data)
-    if not entity.has_key('_id'):
-        abort(400, 'No _id specified')
-    try:
-        db['rooms'].save(entity)
-    except ValidationError as ve:
-        abort(400, str(ve))
-     
-#Get room based on name
-@bottle.route('/api/rooms/<id>', method='GET')
-def get_document(id):
-    entity = db['rooms'].find_one({'_id':id})
-    if not entity:
-        abort(404, 'No document with id %s' % id)
-    return entity
 
-#Change the state of a light inside a room
-@bottle.route('/api/<roomid>/<lightid>', method='PUT')
-def update_document(roomid, lightid):
-    global roomspubsocket
-	
-    room = db['rooms'].find_one({'_id':roomid})
-    if not room:
-        abort(404, 'No document with id %s' % id)
-    
+#Get all rooms
+@app.route('/api/rooms', method='GET')
+def getRooms(db):
+    rooms = Room.objects
+    if rooms:
+        return rooms.to_json()
+    return HTTPError(404, "No rooms found")
+
+#Add or update a room
+@app.route('/api/rooms', method='PUT')
+def putRoom(db):
     data = request.body.readline()
     if not data:
-        abort(400, 'No data received')
-    
-    entity = json.loads(data)
-    
-    light = next((item for item in room["lights"] if item["name"] == lightid), None)
-    
-    if entity.has_key('state'):
-    	kaku(light["rc"], light["rcid"], light["type"], entity['state'])
-    	db['rooms'].update(
-   			{ '_id': roomid, 'lights.name': lightid },
-   			{ '$set': { 'lights.$.state' : entity['state'] } }
-		)
-    
-    roomspubsocket.send_json(db['rooms'].find_one({'_id':roomid}))
+        return HTTPError(400, 'No data received')
+    try:
+        room = Room.from_json(data)
+        room.save()
+        return {'status': 'ok'}
+    except ValidationError as ve:
+        return HTTPError(400, str(ve))
+
+#Get room
+@app.route('/api/rooms/<roomID>', method='GET')
+def getRoomData(id, db):
+    room = Room.objects.get(pk = id)
+    if not room:
+        return HTTPError(404, 'No room with id %s' % id)
+    return room.to_json()
+
+#Delere room
+@app.route('/api/rooms/<roomID>', method='DELETE')
+def deleteRoom(id, db):
+    room = Room.objects.get(pk = id)
+    if not room:
+        return HTTPError(404, 'No room with id %s' % id)
+    room.delete()
     return {'status': 'ok'}
 
-#Listen for room updates
-@bottle.route('/api/rooms/listen')
+#Get devices of room
+@app.route('/api/rooms/<roomID>/devices', method='GET')
+def getRoomDevices(id, db):
+    devices = Device.objects.get(room = id)
+    if not devices:
+        return HTTPError(404, 'Room with id %s has no devices' % id)
+    return devices.to_json()
+
+#Get scenarios of room
+@app.route('/api/rooms/<roomID>/scenarios', method='GET')
+def getRoomScenarios(id, db):
+    scenarios = Scenario.objects.get(room = id)
+    if not scenarios:
+        return HTTPError(404, 'Room with id %s has no scenarios' % id)
+    return scenarios.to_json()
+
+
+#Get all devices
+@app.route('/api/devices', method='GET')
+def getDevices(db):
+    devices = Device.objects
+    if devices:
+        return devices.to_json()
+    return HTTPError(404, "No devices found")
+
+#Add or update device
+@app.route('/api/devices', method='PUT')
+def putDevice(db):
+    data = request.body.readline()
+    if not data:
+        return HTTPError(400, 'No data received')
+    try: #maybe has to change, not sure
+        device = Device.from_json(data)
+        device.save()
+        return {'status': 'ok'}
+    except ValidationError as ve:
+        return HTTPError(400, str(ve))
+
+#Get device
+@app.route('/api/devices/<deviceID>', method='GET')
+def getDeviceData(id, db):
+    device = Device.objects.get(pk = id)
+    if not device:
+        return HTTPError(404, 'No device with id %s' % id)
+    return device.to_json()
+
+#Delete device
+@app.route('/api/devices/<deviceID>', method='DELETE')
+def deleteDevice(id, db):
+    device = Device.objects.get(pk = id)
+    if not device:
+        return HTTPError(404, 'No device with id %s' % id)
+    device.delete()
+    return {'status': 'ok'}
+
+#Change state of device, execute command, put data
+@app.route('/api/devices/<deviceID>', method='PUT')
+def putDeviceData(id, db):
+    global roomspubsocket
+  
+    device = Device.objects.get(pk = id)
+    if not device:
+        return HTTPError(404, 'No device with id %s' % id)
+    
+    data = request.body.readline()
+    if not data:
+        return HTTPError(400, 'No data received')
+    
+    entity = json.loads(data)
+    
+    if entity.has_key('state'): #TODO Change to correct Model and communicate to different HW
+        kaku(light["rc"], light["rcid"], light["type"], entity['state'])
+        db['rooms'].update(
+            { '_id': roomid, 'lights.name': lightid },
+            { '$set': { 'lights.$.state' : entity['state'] } }
+        
+        roomspubsocket.send_json(device.to_json())
+        return {'status': 'ok'}
+    )
+
+
+#Get all scenario's
+@app.route('/api/scenarios', method='GET')
+def getScenarios(db):
+    scenarios = Scenario.objects
+    if scenarios:
+        return scenarios.to_json()
+    return HTTPError(404, "No scenarios found")
+
+#Add or update scenario
+@app.route('/api/scenarios', method='PUT')
+def putScenario(db):
+    data = request.body.readline()
+    if not data:
+        return HTTPError(400, 'No data received')
+    try: #maybe has to change, not sure
+        scenario = Scenario.from_json(data)
+        scenario.save()
+        return {'status': 'ok'}
+    except ValidationError as ve:
+        return HTTPError(400, str(ve))
+
+#Get scenario
+@app.route('/api/scenarios/<scenarioID>', method='GET')
+def getScenarioData(id, db):
+    scenario = Scenario.objects.get(pk = id)
+    if not scenario:
+        return HTTPError(404, 'No scenario with id %s' % id)
+    return scenario.to_json()
+
+#Delete scenario
+@app.route('/api/scenarios/<scenarioID>', method='DELETE')
+def deleteScenario(id, db):
+    scenario = Scenario.objects.get(pk = id)
+    if not scenario:
+        return HTTPError(404, 'No scenario with id %s' % id)
+    scenario.delete()
+    return {'status': 'ok'}
+
+#Execute scenario
+@app.route('/api/scenarios/<scenarioID>', method='PUT')
+def putDeviceData(id, db):
+    scenario = Scenario.objects.get(pk = id)
+    if not scenario:
+        return HTTPError(404, 'No scenario with id %s' % id)
+    
+    data = request.body.readline()
+    if not data:
+        return HTTPError(400, 'No data received')
+    
+    entity = json.loads(data)
+    
+    if entity.has_key('state'):
+        #TODO Add scenario logic
+        return {'status': 'ok'}
+    )
+
+#Listen to server (PUB - SUB)
+@app.route('/api/listen', method='GET')
 def listen():
     roomssubsocket = ctx.socket(zmq.SUB)
     roomssubsocket.setsockopt(zmq.SUBSCRIBE, '')
     roomssubsocket.connect('inproc://roomspub')
     
     #fix disconnecting clients
-    rfile = bottle.request.environ['wsgi.input'].rfile
+    rfile = app.request.environ['wsgi.input'].rfile
 
     poll = zmq.Poller()
     poll.register(roomssubsocket, zmq.POLLIN)
@@ -119,7 +250,7 @@ def listen():
     if rfile.fileno() in events:
         return
     
-    room = roomssubsocket.recv_json()
-    return room
+    data = roomssubsocket.recv_json()
+    return data
 
-bottle.run(host='192.168.2.215', port=8080, debug=False, server="gevent")
+app.run(host='192.168.2.215', port=8080, debug=False, server="gevent")

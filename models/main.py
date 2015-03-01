@@ -25,10 +25,14 @@ for room in Room.objects:
 	for device in Device.objects(room = room.id):
 		print device.name
 		print device._cls
+		print device.to_json()
 print 'Scenarios:'
 for scenario in Scenario.objects:
 	print scenario.name
 
+test = Room.objects.get(pk = tim.pk)
+print test.name
+print test.to_json()
 
 
 #ROOM name
