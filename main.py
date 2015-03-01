@@ -187,7 +187,7 @@ def putDeviceData(deviceID, db):
     def updateEnergyMonitor():
         measurement = Mesurement(dateTime = datetime.datetime.now, power = entity['power'])
         #TODO Update average
-        device.measurements.append(measurement)
+        device.mesurements.append(measurement)
         device.save()
         device.reload()
 
