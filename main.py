@@ -168,11 +168,10 @@ def putDeviceData(id, db):
         kaku(light["rc"], light["rcid"], light["type"], entity['state'])
         db['rooms'].update(
             { '_id': roomid, 'lights.name': lightid },
-            { '$set': { 'lights.$.state' : entity['state'] } }
+            { '$set': { 'lights.$.state' : entity['state'] } })
         
         roomspubsocket.send_json(device.to_json())
         return {'status': 'ok'}
-    )
 
 
 #Get all scenario's
@@ -229,7 +228,6 @@ def putDeviceData(id, db):
     if entity.has_key('state'):
         #TODO Add scenario logic
         return {'status': 'ok'}
-    )
 
 #Listen to server (PUB - SUB)
 @app.route('/api/listen', method='GET')
