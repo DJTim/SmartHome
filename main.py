@@ -170,8 +170,9 @@ def putDeviceData(deviceID, db):
 
     #TODO Move to Model class or separate py to communicate with hardware
     def updateKaku():
-        Device.update_one(state = entity['state'])
-        kaku(Device.rc, Device.rcid, Device.type, Device.state)
+        device.state = entity['state']
+        device.save()
+        kaku(device.rc, device.rcid, device.type, device.state)
 
     def updateIRDevice():
         #TODO
@@ -184,15 +185,15 @@ def putDeviceData(deviceID, db):
     def updateEnergyMonitor():
         measurement = Mesurement(dateTime = datetime.datetime.now, power = entity['power'])
         #TODO Update average
-        Device.measurements.append(measurement)
-        Device.save()
-        Device.reload()
+        device.measurements.append(measurement)
+        device.save()
+        device.reload()
 
     deviceComm = {"KakuDevice": updateKaku, "IRDevice": updateIRDevice, "HTTPDevice": updateHTTPDevice, "EnergyMonitor": updateEnergyMonitor}
     #END Block
 
     try:
-        deviceComm[Device.__class__.__name__]()
+        deviceComm[device.__class__.__name__]()
         roomspubsocket.send_json(device.to_json())
         return {'status': 'ok'}
     except ValidationError as ve:
