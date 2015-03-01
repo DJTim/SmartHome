@@ -11,6 +11,8 @@ from models.room import *
 from models.scenario import *
 from models.device import *
 
+deviceClasses = {'KakuDevice' : KakuDevice, 'IRDevice' : IRDevice, 'HTTPDevice' : HTTPDevice, 'EnergyMonitor' : EnergyMonitor}
+
 #bottle and mongoengine init
 app = bottle.Bottle()
 plugin = mongoengine.Plugin(db='test_db')
@@ -122,11 +124,13 @@ def getDevices(db):
 #Add or update device
 @app.route('/api/devices', method='PUT')
 def putDevice(db):
+    global deviceClasses
     data = request.body.readline()
     if not data:
         return HTTPError(400, 'No data received')
-    try: #maybe has to change, not sure
-        device = Device.from_json(data)
+    entity = json.loads(data)
+    try:
+        device = deviceClasses[entity['cls']].from_json(entity['device'])
         device.save()
         return {'status': 'ok'}
     except ValidationError as ve:
