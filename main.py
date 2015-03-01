@@ -184,7 +184,7 @@ def putDeviceData(deviceID, db):
         #TODO
         print "HTTPDevice"
 
-    def addEnergyMonitorMesurement():
+    def addEnergyMonitorMeasurement():
         measurement = Measurement(dateTime = datetime.datetime.now, power = entity['power'])
         #TODO Update average
         device.measurements.append(measurement)
