@@ -1,4 +1,5 @@
 import json
+import datetime
 from gevent import monkey; monkey.patch_all()
 from zmq import green as zmq
 import bottle
@@ -172,6 +173,7 @@ def putDeviceData(deviceID, db):
     def updateKaku():
         device.state = entity['state']
         device.save()
+        device.reload()
         kaku(device.rc, device.rcid, device.type, device.state)
 
     def updateIRDevice():
