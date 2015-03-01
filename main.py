@@ -79,35 +79,35 @@ def putRoom(db):
 
 #Get room
 @app.route('/api/rooms/<roomID>', method='GET')
-def getRoomData(id, db):
-    room = Room.objects.get(pk = id)
+def getRoomData(roomID, db):
+    room = Room.objects.get(pk = roomID)
     if not room:
-        return HTTPError(404, 'No room with id %s' % id)
+        return HTTPError(404, 'No room with id %s' % roomID)
     return room.to_json()
 
 #Delere room
 @app.route('/api/rooms/<roomID>', method='DELETE')
-def deleteRoom(id, db):
-    room = Room.objects.get(pk = id)
+def deleteRoom(roomID, db):
+    room = Room.objects.get(pk = roomID)
     if not room:
-        return HTTPError(404, 'No room with id %s' % id)
+        return HTTPError(404, 'No room with id %s' % roomID)
     room.delete()
     return {'status': 'ok'}
 
 #Get devices of room
 @app.route('/api/rooms/<roomID>/devices', method='GET')
-def getRoomDevices(id, db):
-    devices = Device.objects.get(room = id)
+def getRoomDevices(roomID, db):
+    devices = Device.objects.get(room = roomID)
     if not devices:
-        return HTTPError(404, 'Room with id %s has no devices' % id)
+        return HTTPError(404, 'Room with id %s has no devices' % roomID)
     return devices.to_json()
 
 #Get scenarios of room
 @app.route('/api/rooms/<roomID>/scenarios', method='GET')
-def getRoomScenarios(id, db):
-    scenarios = Scenario.objects.get(room = id)
+def getRoomScenarios(roomID, db):
+    scenarios = Scenario.objects.get(room = roomID)
     if not scenarios:
-        return HTTPError(404, 'Room with id %s has no scenarios' % id)
+        return HTTPError(404, 'Room with id %s has no scenarios' % roomID)
     return scenarios.to_json()
 
 
@@ -134,29 +134,29 @@ def putDevice(db):
 
 #Get device
 @app.route('/api/devices/<deviceID>', method='GET')
-def getDeviceData(id, db):
-    device = Device.objects.get(pk = id)
+def getDeviceData(deviceID, db):
+    device = Device.objects.get(pk = deviceID)
     if not device:
-        return HTTPError(404, 'No device with id %s' % id)
+        return HTTPError(404, 'No device with id %s' % deviceID)
     return device.to_json()
 
 #Delete device
 @app.route('/api/devices/<deviceID>', method='DELETE')
-def deleteDevice(id, db):
-    device = Device.objects.get(pk = id)
+def deleteDevice(deviceID, db):
+    device = Device.objects.get(pk = deviceID)
     if not device:
-        return HTTPError(404, 'No device with id %s' % id)
+        return HTTPError(404, 'No device with id %s' % deviceID)
     device.delete()
     return {'status': 'ok'}
 
 #Change state of device, execute command, put data
 @app.route('/api/devices/<deviceID>', method='PUT')
-def putDeviceData(id, db):
+def putDeviceData(deviceID, db):
     global roomspubsocket
   
-    device = Device.objects.get(pk = id)
+    device = Device.objects.get(pk = deviceID)
     if not device:
-        return HTTPError(404, 'No device with id %s' % id)
+        return HTTPError(404, 'No device with id %s' % deviceID)
     
     data = request.body.readline()
     if not data:
@@ -197,27 +197,27 @@ def putScenario(db):
 
 #Get scenario
 @app.route('/api/scenarios/<scenarioID>', method='GET')
-def getScenarioData(id, db):
-    scenario = Scenario.objects.get(pk = id)
+def getScenarioData(scenarioID, db):
+    scenario = Scenario.objects.get(pk = scenarioID)
     if not scenario:
-        return HTTPError(404, 'No scenario with id %s' % id)
+        return HTTPError(404, 'No scenario with id %s' % scenarioID)
     return scenario.to_json()
 
 #Delete scenario
 @app.route('/api/scenarios/<scenarioID>', method='DELETE')
-def deleteScenario(id, db):
-    scenario = Scenario.objects.get(pk = id)
+def deleteScenario(scenarioID, db):
+    scenario = Scenario.objects.get(pk = scenarioID)
     if not scenario:
-        return HTTPError(404, 'No scenario with id %s' % id)
+        return HTTPError(404, 'No scenario with id %s' % scenarioID)
     scenario.delete()
     return {'status': 'ok'}
 
 #Execute scenario
 @app.route('/api/scenarios/<scenarioID>', method='PUT')
-def putDeviceData(id, db):
-    scenario = Scenario.objects.get(pk = id)
+def putDeviceData(scenarioID, db):
+    scenario = Scenario.objects.get(pk = scenarioID)
     if not scenario:
-        return HTTPError(404, 'No scenario with id %s' % id)
+        return HTTPError(404, 'No scenario with id %s' % scenarioID)
     
     data = request.body.readline()
     if not data:
