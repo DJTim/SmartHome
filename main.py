@@ -167,16 +167,33 @@ def putDeviceData(deviceID, db):
         return HTTPError(400, 'No data received')
     
     entity = json.loads(data)
-    
-    if entity.has_key('state'): #TODO Change to correct Model and communicate to different HW
-        kaku(light["rc"], light["rcid"], light["type"], entity['state'])
-        db['rooms'].update(
-            { '_id': roomid, 'lights.name': lightid },
-            { '$set': { 'lights.$.state' : entity['state'] } })
-        
+
+    #TODO Move to Model class or separate py to communicate with hardware
+    deviceComm = {"KakuDevice": updateKaku, "IRDevice": updateIRDevice, "HTTPDevice": updateHTTPDevice, "EnergyMonitor": updateEnergyMonitor}
+
+    def updateKaku():
+        Device.update_one(state = entity['state'])
+        kaku(Device.rc, Device.rcid, Device.type, Device.state)
+    def updateIRDevice():
+        #TODO
+
+    def updateHTTPDevice():
+        #TODO
+
+    def updateEnergyMonitor():
+        measurement = Mesurement(dateTime = datetime.datetime.now, power = entity['power'])
+        #TODO Update average
+        Device.measurements.append(measurement)
+        Device.save()
+        Device.reload()
+    #END Block
+
+    try:
+        deviceComm[Device.__class__.__name__]()
         roomspubsocket.send_json(device.to_json())
         return {'status': 'ok'}
-
+    except ValidationError as ve:
+        return HTTPError(400, str(ve))
 
 #Get all scenario's
 @app.route('/api/scenarios', method='GET')
