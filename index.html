@@ -10,24 +10,18 @@
   	var room = "";
   	
   	function updateGUI(data, initGUI){
-		$.each(data, function( index, value ) {
-			if (initGUI){
-				$("#btn_"+index).attr("id",value['name']);
-				$("#btn_"+index+"_spacer").attr("id",value['name']+"Spacer");
-			}
+			idName = "#"+data['name'];
 		
-			idName = "#"+value['name'];
-		
-			switch(value['type']){
+			switch(data['type']){
 				case 'switch':
-					if (value['state']=='off'){
+					if (data['state']=='off'){
 						$(idName).css( "background-color", "#797979" );
 						$(idName+"Spacer").css( "background-color", "#797979");
-						$(idName).attr("onclick","domo_switch('"+value['_id']['$oid']+"','on')");
+						$(idName).attr("onclick","domo_switch('"+data['_id']['$oid']+"','on')");
 					}else{
 						$(idName).css( "background-color", "#454545" );
 						$(idName+"Spacer").css( "background-color", "#454545");
-						$(idName).attr("onclick","domo_switch('"+value['_id']['$oid']+"','off')");
+						$(idName).attr("onclick","domo_switch('"+data['_id']['$oid']+"','off')");
 					}
 				break;
 				case 'dim':
@@ -37,17 +31,17 @@
 							range: "min",
 							min: 0,
 							max: 15,
-							value: value['state'],
+							value: data['state'],
 							stop: function( event, ui ) {
-								domo_switch(value['_id']['$oid'],ui.value);
+								domo_switch(data['_id']['$oid'],ui.value);
 							}
 						});
 						$(idName+"Spacer").click(function() {
-							$("#"+value['name']).slider("value", 0);
-							domo_switch(value['_id']['$oid'], 0);
+							$("#"+data['name']).slider("value", 0);
+							domo_switch(data['_id']['$oid'], 0);
 						});
 					}else{
-						$(idName).slider("value", value['state']);
+						$(idName).slider("value", data['state']);
 						if ($(idName).slider("value") > 0){
 							$(idName+"Spacer").css( "background-color", "#454545");
 						}else{
@@ -56,8 +50,7 @@
 					}
 				break;
 			}
-		});
-	}
+		}
 	
 	function domo_switch(id, state){
 		$.ajax({
@@ -147,7 +140,11 @@
 		
 		//initial update of GUI
 		$.getJSON( "http://10.0.0.197:8080/api/rooms/" + room + "/devices", function(data) {
-			updateGUI(data, true);
+			$.each(data, function( index, value ) {
+				$("#btn_"+index).attr("id",value['name']);
+				$("#btn_"+index+"_spacer").attr("id",value['name']+"Spacer");
+				updateGUI(value, true);
+			});
         });
 		
 		//start long polling to server
