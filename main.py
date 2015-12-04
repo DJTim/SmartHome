@@ -12,11 +12,11 @@ from models.room import *
 from models.scenario import *
 from models.device import *
 
-deviceClasses = {'KakuDevice' : KakuDevice, 'IRDevice' : IRDevice, 'HTTPDevice' : HTTPDevice, 'EnergyMonitor' : EnergyMonitor}
+deviceClasses = {'OldKakuDevice' : OldKakuDevice, 'KakuDevice' : KakuDevice, 'IRDevice' : IRDevice, 'HTTPDevice' : HTTPDevice, 'EnergyMonitor' : EnergyMonitor}
 
 #bottle and mongoengine init
 app = bottle.Bottle()
-plugin = mongoengine.Plugin(db='test_db')
+plugin = mongoengine.Plugin(db='domotica')
 app.install(plugin)
 
 #zmq and socket init. Pub Sub pattern
@@ -31,6 +31,14 @@ def kaku(rc, id, type, state):
 		state = 0
 	subprocess.Popen(["sudo", "./kaku/kaku", str(rc), str(id), type[:1], str(state)])
 
+def oldkaku(rc, id, state):
+    if state == "on":
+        state = 1
+    if state == "off":
+        state = 0
+    print state
+    subprocess.Popen(["sudo", "./kaku/oldkaku", str(rc), str(id), str(state)])
+
 @app.route('/')
 def index():
     return template('index.html')
@@ -39,13 +47,17 @@ def index():
 def server_static(filename):
     return static_file(filename, root='static/')
 
-@app.get('/<filename:re:.*\.js>')
+@app.get('/js/<filename:re:.*\.js>')
 def javascripts(filename):
     return static_file(filename, root='static/js')
 
-@app.get('/<filename:re:.*\.css>')
+@app.get('/css/<filename:re:.*\.css>')
 def stylesheets(filename):
     return static_file(filename, root='static/css')
+
+@app.get('/font/<filename:path>')
+def stylesheets(filename):
+    return static_file(filename, root='static/font')
 
 @app.route('/<id>/on')
 def kaku_on(id):
@@ -170,6 +182,12 @@ def putDeviceData(deviceID, db):
     entity = json.loads(data)
 
     #TODO Move to Model class or separate py to communicate with hardware
+    def executeOldKaku():
+        device.state = entity['state']
+        device.save()
+        device.reload()
+        oldkaku(device.rc, device.rcid, device.state)
+
     def executeKaku():
         device.state = entity['state']
         device.save()
@@ -191,7 +209,7 @@ def putDeviceData(deviceID, db):
         device.save()
         device.reload()
 
-    deviceComm = {"KakuDevice": executeKaku, "IRDevice": executeIRDevice, "HTTPDevice": executeHTTPDevice, "EnergyMonitor": addEnergyMonitorMeasurement}
+    deviceComm = {"OldKakuDevice": executeOldKaku, "KakuDevice": executeKaku, "IRDevice": executeIRDevice, "HTTPDevice": executeHTTPDevice, "EnergyMonitor": addEnergyMonitorMeasurement}
     #END Block
 
     try:
@@ -264,7 +282,7 @@ def listen():
     roomssubsocket.connect('inproc://roomspub')
     
     #fix disconnecting clients
-    rfile = app.request.environ['wsgi.input'].rfile
+    rfile = bottle.request.environ['wsgi.input'].rfile
 
     poll = zmq.Poller()
     poll.register(roomssubsocket, zmq.POLLIN)
